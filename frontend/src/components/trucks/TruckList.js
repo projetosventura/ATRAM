@@ -202,6 +202,17 @@ const TruckList = () => {
     setOpenInspectionDialog(false);
   };
 
+  const handleCloseInspectionDialog = () => {
+    setOpenInspectionDialog(false);
+    setSelectedTruck(null);
+    setSelectedDriver('');
+  };
+
+  const handleInspectionComplete = () => {
+    setSelectedTruck(null);
+    setSelectedDriver('');
+  };
+
   return (
     <Container>
       <Box sx={{ my: 4 }}>
@@ -440,7 +451,7 @@ const TruckList = () => {
 
         <Dialog 
           open={openInspectionDialog} 
-          onClose={() => setOpenInspectionDialog(false)}
+          onClose={handleCloseInspectionDialog}
           maxWidth="sm"
           fullWidth
         >
@@ -464,7 +475,7 @@ const TruckList = () => {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenInspectionDialog(false)}>Cancelar</Button>
+            <Button onClick={handleCloseInspectionDialog}>Cancelar</Button>
             <Button
               variant="contained"
               color="primary"
@@ -476,10 +487,11 @@ const TruckList = () => {
           </DialogActions>
         </Dialog>
 
-        {selectedTruck && selectedDriver && (
+        {selectedTruck && selectedDriver && !openInspectionDialog && (
           <InspectionRequestButton
             truck={selectedTruck}
             driver={{ id: selectedDriver }}
+            onComplete={handleInspectionComplete}
           />
         )}
       </Box>

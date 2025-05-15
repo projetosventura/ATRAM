@@ -20,7 +20,7 @@ import axios from 'axios';
 
 const API_URL = '/api';
 
-const InspectionRequestButton = ({ truck, driver }) => {
+const InspectionRequestButton = ({ truck, driver, onComplete }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [inspectionUrl, setInspectionUrl] = useState('');
@@ -59,6 +59,13 @@ const InspectionRequestButton = ({ truck, driver }) => {
     setSnackbarOpen(true);
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    if (onComplete) {
+      onComplete();
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
@@ -77,7 +84,7 @@ const InspectionRequestButton = ({ truck, driver }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>Link de Vistoria</DialogTitle>
         <DialogContent>
           <Typography gutterBottom>
@@ -97,7 +104,7 @@ const InspectionRequestButton = ({ truck, driver }) => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Fechar</Button>
+          <Button onClick={handleClose}>Fechar</Button>
         </DialogActions>
       </Dialog>
 
