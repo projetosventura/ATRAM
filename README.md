@@ -1,6 +1,6 @@
-# Sistema de Cadastro de Motoristas
+# Sistema de Cadastro de Associados
 
-Este é um sistema para gerenciamento de motoristas de caminhão, permitindo o cadastro de informações como nome, CNH e foto.
+Este é um sistema para gerenciamento de associados de caminhão, permitindo o cadastro de informações como nome, CNH e foto.
 
 ## Tecnologias Utilizadas
 
@@ -46,7 +46,7 @@ npm start
 
 ## Funcionalidades
 
-- Cadastro de motoristas com nome e CNH
+- Cadastro de associados com nome e CNH
 - Upload de fotos
 - Visualização em grid responsivo
 - Armazenamento persistente em SQLite 

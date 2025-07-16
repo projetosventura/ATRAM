@@ -26,7 +26,7 @@ import {
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Motoristas', path: '/drivers', icon: <PersonIcon /> },
+  { text: 'Associados', path: '/drivers', icon: <PersonIcon /> },
   { text: 'Caminhões', path: '/trucks', icon: <DirectionsCarIcon /> },
   { text: 'Vistorias', path: '/inspections', icon: <AssignmentIcon /> },
 ];

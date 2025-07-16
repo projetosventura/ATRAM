@@ -16,6 +16,7 @@ import {
   ImageList,
   ImageListItem,
   ImageListItemBar,
+  FormHelperText,
 } from '@mui/material';
 import {
   PhotoCamera as PhotoCameraIcon,
@@ -41,12 +42,11 @@ const PublicInspectionForm = ({ token }) => {
   const [formData, setFormData] = useState({
     mileage: '',
     fuel_level: '',
-    tire_condition: '',
     brake_condition: '',
-    oil_level: '',
     general_condition: '',
     observations: ''
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     fetchInspectionData();
@@ -77,6 +77,7 @@ const PublicInspectionForm = ({ token }) => {
       ...prev,
       [name]: value
     }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
   const handlePhotoChange = (e) => {
@@ -192,25 +193,7 @@ const PublicInspectionForm = ({ token }) => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
-                <InputLabel>Condição dos Pneus</InputLabel>
-                <Select
-                  name="tire_condition"
-                  value={formData.tire_condition}
-                  onChange={handleChange}
-                  label="Condição dos Pneus"
-                >
-                  {conditions.map(condition => (
-                    <MenuItem key={condition.value} value={condition.value}>
-                      {condition.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
+              <FormControl fullWidth error={!!errors.brake_condition}>
                 <InputLabel>Condição dos Freios</InputLabel>
                 <Select
                   name="brake_condition"
@@ -218,35 +201,16 @@ const PublicInspectionForm = ({ token }) => {
                   onChange={handleChange}
                   label="Condição dos Freios"
                 >
-                  {conditions.map(condition => (
-                    <MenuItem key={condition.value} value={condition.value}>
-                      {condition.label}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="good">Bom</MenuItem>
+                  <MenuItem value="regular">Regular</MenuItem>
+                  <MenuItem value="bad">Ruim</MenuItem>
                 </Select>
+                {errors.brake_condition && <FormHelperText>{errors.brake_condition}</FormHelperText>}
               </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
-                <InputLabel>Nível do Óleo</InputLabel>
-                <Select
-                  name="oil_level"
-                  value={formData.oil_level}
-                  onChange={handleChange}
-                  label="Nível do Óleo"
-                >
-                  {conditions.map(condition => (
-                    <MenuItem key={condition.value} value={condition.value}>
-                      {condition.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
+              <FormControl fullWidth error={!!errors.general_condition}>
                 <InputLabel>Condição Geral</InputLabel>
                 <Select
                   name="general_condition"
@@ -254,12 +218,11 @@ const PublicInspectionForm = ({ token }) => {
                   onChange={handleChange}
                   label="Condição Geral"
                 >
-                  {conditions.map(condition => (
-                    <MenuItem key={condition.value} value={condition.value}>
-                      {condition.label}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="good">Bom</MenuItem>
+                  <MenuItem value="regular">Regular</MenuItem>
+                  <MenuItem value="bad">Ruim</MenuItem>
                 </Select>
+                {errors.general_condition && <FormHelperText>{errors.general_condition}</FormHelperText>}
               </FormControl>
             </Grid>
 

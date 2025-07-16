@@ -109,7 +109,7 @@ function App() {
 
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, view: 'dashboard' },
-    { text: 'Motoristas', icon: <PersonIcon />, view: 'drivers' },
+    { text: 'Associados', icon: <PersonIcon />, view: 'drivers' },
     { text: 'Caminhões', icon: <CarIcon />, view: 'trucks' },
     { text: 'Vistorias', icon: <InspectionIcon />, view: 'inspections' },
   ];

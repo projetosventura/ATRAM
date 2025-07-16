@@ -30,7 +30,7 @@ import {
 import axios from 'axios';
 import InspectionRequestButton from '../inspections/InspectionRequestButton';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = '/api';
 
 const vehicleTypes = [
   'Caminhão Baú',
@@ -455,15 +455,15 @@ const TruckList = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>Selecionar Motorista para Vistoria</DialogTitle>
+          <DialogTitle>Selecionar Associado para Vistoria</DialogTitle>
           <DialogContent>
             <Box sx={{ mt: 2 }}>
               <FormControl fullWidth>
-                <InputLabel>Motorista</InputLabel>
+                <InputLabel>Associado</InputLabel>
                 <Select
                   value={selectedDriver}
                   onChange={(e) => setSelectedDriver(e.target.value)}
-                  label="Motorista"
+                  label="Associado"
                 >
                   {drivers.map((driver) => (
                     <MenuItem key={driver.id} value={driver.id}>

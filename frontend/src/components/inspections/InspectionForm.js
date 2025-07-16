@@ -92,17 +92,18 @@ const InspectionForm = ({ inspectionId = null }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
+    
     if (!formData.truck_id) newErrors.truck_id = 'Selecione um caminhão';
-    if (!formData.driver_id) newErrors.driver_id = 'Selecione um motorista';
-    if (!formData.mileage) newErrors.mileage = 'Informe a quilometragem';
-    if (!formData.fuel_level) newErrors.fuel_level = 'Informe o nível de combustível';
-    if (!formData.tire_condition) newErrors.tire_condition = 'Informe a condição dos pneus';
+    if (!formData.driver_id) newErrors.driver_id = 'Selecione um associado';
+    if (!formData.inspection_date) newErrors.inspection_date = 'Informe a data da vistoria';
+    if (!formData.mileage || formData.mileage <= 0) newErrors.mileage = 'Informe a quilometragem';
+    if (!formData.fuel_level || formData.fuel_level < 0 || formData.fuel_level > 100) {
+      newErrors.fuel_level = 'Nível de combustível deve estar entre 0 e 100';
+    }
     if (!formData.brake_condition) newErrors.brake_condition = 'Informe a condição dos freios';
-    if (!formData.oil_level) newErrors.oil_level = 'Informe o nível do óleo';
     if (!formData.general_condition) newErrors.general_condition = 'Informe a condição geral';
     if (!formData.next_inspection_date) newErrors.next_inspection_date = 'Informe a data da próxima vistoria';
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -175,12 +176,12 @@ const InspectionForm = ({ inspectionId = null }) => {
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth error={!!errors.driver_id}>
-              <InputLabel>Motorista</InputLabel>
+              <InputLabel>Associado</InputLabel>
               <Select
                 name="driver_id"
                 value={formData.driver_id}
                 onChange={handleChange}
-                label="Motorista"
+                label="Associado"
               >
                 {drivers.map(driver => (
                   <MenuItem key={driver.id} value={driver.id}>
@@ -190,6 +191,20 @@ const InspectionForm = ({ inspectionId = null }) => {
               </Select>
               {errors.driver_id && <FormHelperText>{errors.driver_id}</FormHelperText>}
             </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              type="date"
+              label="Data da Vistoria"
+              name="inspection_date"
+              value={formData.inspection_date}
+              onChange={handleChange}
+              error={!!errors.inspection_date}
+              helperText={errors.inspection_date}
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6}>
@@ -220,23 +235,6 @@ const InspectionForm = ({ inspectionId = null }) => {
           </Grid>
 
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth error={!!errors.tire_condition}>
-              <InputLabel>Condição dos Pneus</InputLabel>
-              <Select
-                name="tire_condition"
-                value={formData.tire_condition}
-                onChange={handleChange}
-                label="Condição dos Pneus"
-              >
-                <MenuItem value="good">Bom</MenuItem>
-                <MenuItem value="regular">Regular</MenuItem>
-                <MenuItem value="bad">Ruim</MenuItem>
-              </Select>
-              {errors.tire_condition && <FormHelperText>{errors.tire_condition}</FormHelperText>}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
             <FormControl fullWidth error={!!errors.brake_condition}>
               <InputLabel>Condição dos Freios</InputLabel>
               <Select
@@ -250,23 +248,6 @@ const InspectionForm = ({ inspectionId = null }) => {
                 <MenuItem value="bad">Ruim</MenuItem>
               </Select>
               {errors.brake_condition && <FormHelperText>{errors.brake_condition}</FormHelperText>}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth error={!!errors.oil_level}>
-              <InputLabel>Nível do Óleo</InputLabel>
-              <Select
-                name="oil_level"
-                value={formData.oil_level}
-                onChange={handleChange}
-                label="Nível do Óleo"
-              >
-                <MenuItem value="good">Bom</MenuItem>
-                <MenuItem value="regular">Regular</MenuItem>
-                <MenuItem value="bad">Ruim</MenuItem>
-              </Select>
-              {errors.oil_level && <FormHelperText>{errors.oil_level}</FormHelperText>}
             </FormControl>
           </Grid>
 

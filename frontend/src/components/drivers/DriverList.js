@@ -108,20 +108,20 @@ const DriverList = () => {
       fetchDrivers();
     } catch (error) {
       console.error('Error saving driver:', error);
-      alert(error.response?.data?.error || 'Erro ao salvar motorista');
+      alert(error.response?.data?.error || 'Erro ao salvar associado');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Tem certeza que deseja excluir este motorista?')) {
+    if (window.confirm('Tem certeza que deseja excluir este associado?')) {
       try {
         await axios.delete(`${API_URL}/drivers/${id}`);
         fetchDrivers();
       } catch (error) {
         console.error('Error deleting driver:', error);
-        alert('Erro ao excluir motorista');
+        alert('Erro ao excluir associado');
       }
     }
   };
@@ -154,7 +154,7 @@ const DriverList = () => {
     <Container>
       <Box sx={{ my: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center">
-          Motoristas
+          Associados
         </Typography>
 
         <Card sx={{ mb: 4 }}>
@@ -229,7 +229,7 @@ const DriverList = () => {
               setOpenDialog(true);
             }}
           >
-            Novo Motorista
+            Novo Associado
           </Button>
         </Box>
 
@@ -271,7 +271,7 @@ const DriverList = () => {
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle>
-            {editingDriver ? 'Editar Motorista' : 'Novo Motorista'}
+            {editingDriver ? 'Editar Associado' : 'Novo Associado'}
           </DialogTitle>
           <form onSubmit={handleSubmit}>
             <DialogContent>

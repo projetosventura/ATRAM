@@ -147,51 +147,19 @@ const InspectionDetails = ({ inspectionId, onClose }) => {
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Typography variant="subtitle2" color="text.secondary">
-            Condição dos Pneus
+          <Typography variant="subtitle2">Condição dos Freios</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {inspection.brake_condition === 'good' ? 'Bom' : 
+             inspection.brake_condition === 'regular' ? 'Regular' : 'Ruim'}
           </Typography>
-          <Chip
-            label={inspection.tire_condition === 'good' ? 'Bom' :
-                  inspection.tire_condition === 'regular' ? 'Regular' : 'Ruim'}
-            color={getConditionColor(inspection.tire_condition)}
-            size="small"
-          />
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Typography variant="subtitle2" color="text.secondary">
-            Condição dos Freios
+          <Typography variant="subtitle2">Condição Geral</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {inspection.general_condition === 'good' ? 'Bom' : 
+             inspection.general_condition === 'regular' ? 'Regular' : 'Ruim'}
           </Typography>
-          <Chip
-            label={inspection.brake_condition === 'good' ? 'Bom' :
-                  inspection.brake_condition === 'regular' ? 'Regular' : 'Ruim'}
-            color={getConditionColor(inspection.brake_condition)}
-            size="small"
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <Typography variant="subtitle2" color="text.secondary">
-            Nível do Óleo
-          </Typography>
-          <Chip
-            label={inspection.oil_level === 'good' ? 'Bom' :
-                  inspection.oil_level === 'regular' ? 'Regular' : 'Ruim'}
-            color={getConditionColor(inspection.oil_level)}
-            size="small"
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <Typography variant="subtitle2" color="text.secondary">
-            Condição Geral
-          </Typography>
-          <Chip
-            label={inspection.general_condition === 'good' ? 'Bom' :
-                  inspection.general_condition === 'regular' ? 'Regular' : 'Ruim'}
-            color={getConditionColor(inspection.general_condition)}
-            size="small"
-          />
         </Grid>
 
         {inspection.observations && (

@@ -18,9 +18,7 @@ class InspectionRequestRepository {
         inspection_date DATETIME,
         mileage INTEGER,
         fuel_level INTEGER,
-        tire_condition TEXT,
         brake_condition TEXT,
-        oil_level TEXT,
         general_condition TEXT,
         observations TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -52,9 +50,8 @@ class InspectionRequestRepository {
       INSERT INTO inspection_requests (
         truck_id, driver_id, token, status,
         inspection_date, mileage, fuel_level,
-        tire_condition, brake_condition, oil_level,
-        general_condition, observations
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        brake_condition, general_condition, observations
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     return new Promise((resolve, reject) => {
@@ -68,9 +65,7 @@ class InspectionRequestRepository {
           inspectionRequest.inspection_date,
           inspectionRequest.mileage,
           inspectionRequest.fuel_level,
-          inspectionRequest.tire_condition,
           inspectionRequest.brake_condition,
-          inspectionRequest.oil_level,
           inspectionRequest.general_condition,
           inspectionRequest.observations
         ],
@@ -136,9 +131,7 @@ class InspectionRequestRepository {
       SET inspection_date = ?,
           mileage = ?,
           fuel_level = ?,
-          tire_condition = ?,
           brake_condition = ?,
-          oil_level = ?,
           general_condition = ?,
           observations = ?,
           status = ?,
@@ -153,9 +146,7 @@ class InspectionRequestRepository {
           inspectionRequest.inspection_date,
           inspectionRequest.mileage,
           inspectionRequest.fuel_level,
-          inspectionRequest.tire_condition,
           inspectionRequest.brake_condition,
-          inspectionRequest.oil_level,
           inspectionRequest.general_condition,
           inspectionRequest.observations,
           inspectionRequest.status,

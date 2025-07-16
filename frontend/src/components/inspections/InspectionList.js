@@ -230,20 +230,18 @@ const InspectionList = () => {
                     <Typography>{selectedInspection.fuel_level}%</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle2">Condição dos Pneus</Typography>
-                    {getConditionChip(selectedInspection.tire_condition)}
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle2">Condição dos Freios</Typography>
-                    {getConditionChip(selectedInspection.brake_condition)}
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle2">Nível do Óleo</Typography>
-                    {getConditionChip(selectedInspection.oil_level)}
+                    <Typography variant="body2" color="textSecondary">
+                      {selectedInspection.brake_condition === 'good' ? 'Bom' :
+                       selectedInspection.brake_condition === 'regular' ? 'Regular' : 'Ruim'}
+                    </Typography>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="subtitle2">Condição Geral</Typography>
-                    {getConditionChip(selectedInspection.general_condition)}
+                    <Typography variant="body2" color="textSecondary">
+                      {selectedInspection.general_condition === 'good' ? 'Bom' :
+                       selectedInspection.general_condition === 'regular' ? 'Regular' : 'Ruim'}
+                    </Typography>
                   </Grid>
                   {selectedInspection.observations && (
                     <Grid item xs={12}>

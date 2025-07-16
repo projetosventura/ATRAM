@@ -8,9 +8,7 @@ class InspectionRequest {
     inspection_date = null,
     mileage = null,
     fuel_level = null,
-    tire_condition = null,
     brake_condition = null,
-    oil_level = null,
     general_condition = null,
     observations = null,
     photos = [],
@@ -25,9 +23,7 @@ class InspectionRequest {
     this.inspection_date = inspection_date;
     this.mileage = mileage;
     this.fuel_level = fuel_level;
-    this.tire_condition = tire_condition;
     this.brake_condition = brake_condition;
-    this.oil_level = oil_level;
     this.general_condition = general_condition;
     this.observations = observations;
     this.photos = photos;
@@ -51,14 +47,8 @@ class InspectionRequest {
       if (!this.fuel_level || this.fuel_level < 0 || this.fuel_level > 100) {
         throw new Error('Nível de combustível deve estar entre 0 e 100');
       }
-      if (!this.tire_condition) {
-        throw new Error('Condição dos pneus é obrigatória');
-      }
       if (!this.brake_condition) {
         throw new Error('Condição dos freios é obrigatória');
-      }
-      if (!this.oil_level) {
-        throw new Error('Nível do óleo é obrigatório');
       }
       if (!this.general_condition) {
         throw new Error('Condição geral é obrigatória');

@@ -14,18 +14,16 @@ class InspectionRepository {
         this.db.run(
           `INSERT INTO inspections (
             truck_id, driver_id, inspection_date, mileage, fuel_level,
-            tire_condition, brake_condition, oil_level, general_condition,
+            brake_condition, general_condition,
             observations, next_inspection_date, status
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             inspection.truck_id,
             inspection.driver_id,
             inspection.inspection_date,
             inspection.mileage,
             inspection.fuel_level,
-            inspection.tire_condition,
             inspection.brake_condition,
-            inspection.oil_level,
             inspection.general_condition,
             inspection.observations,
             inspection.next_inspection_date,
@@ -176,9 +174,8 @@ class InspectionRepository {
         this.db.run(
           `UPDATE inspections SET
             truck_id = ?, driver_id = ?, inspection_date = ?, mileage = ?,
-            fuel_level = ?, tire_condition = ?, brake_condition = ?,
-            oil_level = ?, general_condition = ?, observations = ?,
-            next_inspection_date = ?, status = ?
+            fuel_level = ?, brake_condition = ?, general_condition = ?,
+            observations = ?, next_inspection_date = ?, status = ?
           WHERE id = ?`,
           [
             inspection.truck_id,
@@ -186,9 +183,7 @@ class InspectionRepository {
             inspection.inspection_date,
             inspection.mileage,
             inspection.fuel_level,
-            inspection.tire_condition,
             inspection.brake_condition,
-            inspection.oil_level,
             inspection.general_condition,
             inspection.observations,
             inspection.next_inspection_date,
