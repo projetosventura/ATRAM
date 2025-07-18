@@ -178,7 +178,32 @@ const InspectionList = () => {
                   <TableCell>
                     {new Date(inspection.created_at).toLocaleDateString()}
                   </TableCell>
-                  <TableCell>{inspection.truck_plate}</TableCell>
+                  <TableCell>
+                    {inspection.vehicle_info?.type === 'vehicle_set' ? (
+                      <Box>
+                        <Typography variant="body2" fontWeight="bold">
+                          {inspection.vehicle_info.name}
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          {inspection.vehicle_info.set_type === 'cavalo' ? 'Apenas Cavalo' : 
+                           inspection.vehicle_info.set_type === 'carreta' ? 'Apenas Carreta' : 
+                           'Conjugado'}
+                        </Typography>
+                        {inspection.vehicle_info.cavalo && (
+                          <Typography variant="caption" display="block">
+                            Cavalo: {inspection.vehicle_info.cavalo.plate}
+                          </Typography>
+                        )}
+                        {inspection.vehicle_info.carreta && (
+                          <Typography variant="caption" display="block">
+                            Carreta: {inspection.vehicle_info.carreta.plate}
+                          </Typography>
+                        )}
+                      </Box>
+                    ) : (
+                      inspection.truck_plate
+                    )}
+                  </TableCell>
                   <TableCell>{inspection.driver_name}</TableCell>
                   <TableCell>{getStatusChip(inspection.status)}</TableCell>
                   <TableCell>
@@ -212,9 +237,33 @@ const InspectionList = () => {
               <DialogContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle2">Caminhão</Typography>
+                    <Typography variant="subtitle2">
+                      {selectedInspection.vehicle_info?.type === 'vehicle_set' ? 'Conjunto de Veículos' : 'Caminhão'}
+                    </Typography>
                     <Typography>
-                      {selectedInspection.truck_plate} - {selectedInspection.truck_model}
+                      {selectedInspection.vehicle_info?.type === 'vehicle_set' ? (
+                        <>
+                          {selectedInspection.vehicle_info.name} ({selectedInspection.vehicle_info.set_type === 'cavalo' ? 'Apenas Cavalo' : 
+                          selectedInspection.vehicle_info.set_type === 'carreta' ? 'Apenas Carreta' : 
+                          'Conjugado'})
+                          {selectedInspection.vehicle_info.cavalo && (
+                            <Box component="div" sx={{ mt: 0.5 }}>
+                              <Typography variant="caption" display="block">
+                                Cavalo: {selectedInspection.vehicle_info.cavalo.plate} - {selectedInspection.vehicle_info.cavalo.brand} {selectedInspection.vehicle_info.cavalo.model}
+                              </Typography>
+                            </Box>
+                          )}
+                          {selectedInspection.vehicle_info.carreta && (
+                            <Box component="div" sx={{ mt: 0.5 }}>
+                              <Typography variant="caption" display="block">
+                                Carreta: {selectedInspection.vehicle_info.carreta.plate} - {selectedInspection.vehicle_info.carreta.brand} {selectedInspection.vehicle_info.carreta.model}
+                              </Typography>
+                            </Box>
+                          )}
+                        </>
+                      ) : (
+                        `${selectedInspection.truck_plate} - ${selectedInspection.truck_model}`
+                      )}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={6}>

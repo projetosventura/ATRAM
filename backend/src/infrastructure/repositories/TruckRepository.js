@@ -26,6 +26,7 @@ class TruckRepository {
         brand TEXT NOT NULL,
         year INTEGER NOT NULL,
         type TEXT NOT NULL,
+        vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta')),
         capacity REAL NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -47,13 +48,13 @@ class TruckRepository {
   async create(truck) {
     console.log('Creating truck:', truck);
     const sql = `
-      INSERT INTO trucks (plate, chassis, model, brand, year, type, capacity, photo)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO trucks (plate, chassis, model, brand, year, type, vehicle_category, capacity, photo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.capacity, truck.photo],
+        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.vehicle_category, truck.capacity, truck.photo],
         function(err) {
           if (err) {
             console.error('Error creating truck:', err);
@@ -70,13 +71,13 @@ class TruckRepository {
   async update(id, truck) {
     const sql = `
       UPDATE trucks
-      SET plate = ?, chassis = ?, model = ?, brand = ?, year = ?, type = ?, capacity = ?, photo = ?
+      SET plate = ?, chassis = ?, model = ?, brand = ?, year = ?, type = ?, vehicle_category = ?, capacity = ?, photo = ?
       WHERE id = ?
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.capacity, truck.photo, id],
+        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.vehicle_category, truck.capacity, truck.photo, id],
         (err) => {
           if (err) reject(err);
           else resolve({ ...truck, id });
@@ -147,6 +148,11 @@ class TruckRepository {
     if (filters.type) {
       sql += ' AND type = ?';
       params.push(filters.type);
+    }
+
+    if (filters.vehicle_category) {
+      sql += ' AND vehicle_category = ?';
+      params.push(filters.vehicle_category);
     }
 
     if (filters.year) {

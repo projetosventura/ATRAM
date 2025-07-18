@@ -20,7 +20,7 @@ import axios from 'axios';
 
 const API_URL = '/api';
 
-const InspectionRequestButton = ({ truck, driver, onComplete }) => {
+const InspectionRequestButton = ({ truck, vehicleSet, driver, onComplete }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [inspectionUrl, setInspectionUrl] = useState('');
@@ -28,19 +28,27 @@ const InspectionRequestButton = ({ truck, driver, onComplete }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (truck && driver) {
+    if ((truck || vehicleSet) && driver) {
       handleCreateRequest();
     }
-  }, [truck, driver]);
+  }, [truck, vehicleSet, driver]);
 
   const handleCreateRequest = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post(`${API_URL}/inspection-requests`, {
-        truck_id: truck.id,
+      const requestData = {
         driver_id: driver.id
-      });
+      };
+
+      // Se for um conjunto de veículos, usar vehicle_set_id, senão usar truck_id para compatibilidade
+      if (vehicleSet) {
+        requestData.vehicle_set_id = vehicleSet.id;
+      } else if (truck) {
+        requestData.truck_id = truck.id;
+      }
+
+      const response = await axios.post(`${API_URL}/inspection-requests`, requestData);
 
       const baseUrl = window.location.origin;
       const fullUrl = `${baseUrl}/inspection/${response.data.request.token}`;

@@ -156,9 +156,32 @@ const PublicInspectionForm = ({ token }) => {
         </Typography>
 
         <Box sx={{ mb: 4 }}>
-          <Typography variant="subtitle1">
-            Caminhão: {inspectionData.truck_plate} - {inspectionData.truck_model}
-          </Typography>
+          {inspectionData.vehicle_info?.type === 'vehicle_set' ? (
+            <>
+              <Typography variant="h6" gutterBottom>
+                Conjunto de Veículos: {inspectionData.vehicle_info.name}
+              </Typography>
+              <Typography variant="subtitle1" color="textSecondary">
+                Tipo: {inspectionData.vehicle_info.set_type === 'cavalo' ? 'Apenas Cavalo' : 
+                       inspectionData.vehicle_info.set_type === 'carreta' ? 'Apenas Carreta' : 
+                       'Conjugado (Cavalo + Carreta)'}
+              </Typography>
+              {inspectionData.vehicle_info.cavalo && (
+                <Typography variant="subtitle1">
+                  Cavalo: {inspectionData.vehicle_info.cavalo.plate} - {inspectionData.vehicle_info.cavalo.brand} {inspectionData.vehicle_info.cavalo.model}
+                </Typography>
+              )}
+              {inspectionData.vehicle_info.carreta && (
+                <Typography variant="subtitle1">
+                  Carreta: {inspectionData.vehicle_info.carreta.plate} - {inspectionData.vehicle_info.carreta.brand} {inspectionData.vehicle_info.carreta.model}
+                </Typography>
+              )}
+            </>
+          ) : (
+            <Typography variant="subtitle1">
+              Caminhão: {inspectionData.truck_plate} - {inspectionData.truck_model}
+            </Typography>
+          )}
           <Typography variant="subtitle1">
             Motorista: {inspectionData.driver_name}
           </Typography>

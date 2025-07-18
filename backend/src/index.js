@@ -19,6 +19,11 @@ const InspectionRequestService = require('./application/services/InspectionReque
 const InspectionRequestController = require('./interfaces/controllers/InspectionRequestController');
 const createInspectionRequestRouter = require('./interfaces/routes/inspectionRequestRoutes');
 
+const VehicleSetRepository = require('./infrastructure/repositories/VehicleSetRepository');
+const VehicleSetService = require('./application/services/VehicleSetService');
+const VehicleSetController = require('./interfaces/controllers/VehicleSetController');
+const createVehicleSetRouter = require('./interfaces/routes/vehicleSetRoutes');
+
 // Inicializar banco de dados
 async function startServer() {
   try {
@@ -72,11 +77,16 @@ async function startServer() {
     const truckService = new TruckService(truckRepository);
     const truckController = new TruckController(truckService);
 
+    const vehicleSetRepository = new VehicleSetRepository();
+    const vehicleSetService = new VehicleSetService(vehicleSetRepository, truckRepository);
+    const vehicleSetController = new VehicleSetController(vehicleSetService);
+
     const inspectionRequestRepository = new InspectionRequestRepository();
     const inspectionRequestService = new InspectionRequestService(
       inspectionRequestRepository,
       truckRepository,
-      driverRepository
+      driverRepository,
+      vehicleSetRepository
     );
     const inspectionRequestController = new InspectionRequestController(inspectionRequestService);
 
@@ -88,6 +98,7 @@ async function startServer() {
     // Rotas da API
     app.use('/api', createDriverRouter(driverController));
     app.use('/api', createTruckRouter(truckController));
+    app.use('/api', createVehicleSetRouter(vehicleSetController));
     app.use('/api', createInspectionRequestRouter(inspectionRequestController));
 
     // Tratamento de erros

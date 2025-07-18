@@ -41,6 +41,11 @@ const vehicleTypes = [
   'Outros'
 ];
 
+const vehicleCategories = [
+  { value: 'cavalo', label: 'Cavalo Mecânico' },
+  { value: 'carreta', label: 'Carreta/Reboque' }
+];
+
 const TruckList = () => {
   const [trucks, setTrucks] = useState([]);
   const [drivers, setDrivers] = useState([]);
@@ -63,6 +68,7 @@ const TruckList = () => {
     brand: '',
     year: '',
     type: '',
+    vehicle_category: '',
     capacity: '',
     photo: null
   });
@@ -108,6 +114,7 @@ const TruckList = () => {
       formDataToSend.append('brand', formData.brand);
       formDataToSend.append('year', formData.year);
       formDataToSend.append('type', formData.type);
+      formDataToSend.append('vehicle_category', formData.vehicle_category);
       formDataToSend.append('capacity', formData.capacity);
       
       if (formData.photo instanceof File) {
@@ -135,6 +142,7 @@ const TruckList = () => {
         brand: '',
         year: '',
         type: '',
+        vehicle_category: '',
         capacity: '',
         photo: null
       });
@@ -170,6 +178,7 @@ const TruckList = () => {
       brand: truck.brand,
       year: truck.year,
       type: truck.type,
+      vehicle_category: truck.vehicle_category,
       capacity: truck.capacity,
       photo: null
     });
@@ -289,6 +298,7 @@ const TruckList = () => {
                 brand: '',
                 year: '',
                 type: '',
+                vehicle_category: '',
                 capacity: '',
                 photo: null
               });
@@ -318,6 +328,7 @@ const TruckList = () => {
                   <Typography color="textSecondary">Marca/Modelo: {truck.brand} {truck.model}</Typography>
                   <Typography color="textSecondary">Ano: {truck.year}</Typography>
                   <Typography color="textSecondary">Tipo: {truck.type}</Typography>
+                  <Typography color="textSecondary">Categoria: {truck.vehicle_category === 'cavalo' ? 'Cavalo Mecânico' : 'Carreta/Reboque'}</Typography>
                   <Typography color="textSecondary">Capacidade: {truck.capacity} kg</Typography>
                   <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
@@ -409,7 +420,7 @@ const TruckList = () => {
                     InputProps={{ inputProps: { min: 0 } }}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     select
@@ -421,6 +432,22 @@ const TruckList = () => {
                     {vehicleTypes.map((type) => (
                       <MenuItem key={type} value={type}>
                         {type}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Categoria do Veículo"
+                    value={formData.vehicle_category}
+                    onChange={(e) => setFormData({ ...formData, vehicle_category: e.target.value })}
+                    required
+                  >
+                    {vehicleCategories.map((category) => (
+                      <MenuItem key={category.value} value={category.value}>
+                        {category.label}
                       </MenuItem>
                     ))}
                   </TextField>

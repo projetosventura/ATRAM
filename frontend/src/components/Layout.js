@@ -21,6 +21,7 @@ import {
   DirectionsCar as DirectionsCarIcon,
   Person as PersonIcon,
   Assignment as AssignmentIcon,
+  Settings as VehicleSetIcon,
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -28,6 +29,7 @@ const drawerWidth = 240;
 const menuItems = [
   { text: 'Associados', path: '/drivers', icon: <PersonIcon /> },
   { text: 'Caminhões', path: '/trucks', icon: <DirectionsCarIcon /> },
+  { text: 'Conjuntos de Veículos', path: '/vehicle-sets', icon: <VehicleSetIcon /> },
   { text: 'Vistorias', path: '/inspections', icon: <AssignmentIcon /> },
 ];
 

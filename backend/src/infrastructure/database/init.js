@@ -74,17 +74,34 @@ const createTables = async (db) => {
         brand TEXT NOT NULL,
         year INTEGER NOT NULL,
         type TEXT NOT NULL,
+        vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta')),
         capacity REAL NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // Tabela de solicitações de vistoria
+    // Tabela de conjuntos de veículos
+    await runQuery(`
+      CREATE TABLE IF NOT EXISTS vehicle_sets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado')),
+        cavalo_id INTEGER,
+        carreta_id INTEGER,
+        description TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (cavalo_id) REFERENCES trucks (id),
+        FOREIGN KEY (carreta_id) REFERENCES trucks (id)
+      )
+    `);
+
+    // Tabela de solicitações de vistoria (agora usando conjuntos de veículos)
     await runQuery(`
       CREATE TABLE IF NOT EXISTS inspection_requests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        truck_id INTEGER NOT NULL,
+        vehicle_set_id INTEGER,
+        truck_id INTEGER, -- manter compatibilidade com versão anterior
         driver_id INTEGER NOT NULL,
         token TEXT NOT NULL UNIQUE,
         status TEXT NOT NULL DEFAULT 'pending',
@@ -96,6 +113,7 @@ const createTables = async (db) => {
         observations TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (vehicle_set_id) REFERENCES vehicle_sets (id),
         FOREIGN KEY (truck_id) REFERENCES trucks (id),
         FOREIGN KEY (driver_id) REFERENCES drivers (id)
       )

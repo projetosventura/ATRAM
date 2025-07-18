@@ -1,7 +1,8 @@
 class InspectionRequest {
   constructor({
     id = null,
-    truck_id,
+    truck_id = null,
+    vehicle_set_id = null,
     driver_id,
     token = null,
     status = 'pending',
@@ -17,6 +18,7 @@ class InspectionRequest {
   }) {
     this.id = id;
     this.truck_id = truck_id;
+    this.vehicle_set_id = vehicle_set_id;
     this.driver_id = driver_id;
     this.token = token;
     this.status = status;
@@ -32,8 +34,8 @@ class InspectionRequest {
   }
 
   validate() {
-    if (!this.truck_id) {
-      throw new Error('ID do caminhão é obrigatório');
+    if (!this.truck_id && !this.vehicle_set_id) {
+      throw new Error('ID do caminhão ou conjunto de veículos é obrigatório');
     }
     if (!this.driver_id) {
       throw new Error('ID do motorista é obrigatório');
