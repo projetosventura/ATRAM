@@ -1,6 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const migrateDollySupport = require('./migrate-dolly-support');
+const migrateDollySemiReboque = require('./migrate-dolly-semi-reboque');
 
 async function initializeDatabase() {
   const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
@@ -31,6 +33,17 @@ async function initializeDatabase() {
 
   // Criar tabelas
   await createTables(db);
+
+  // Executar migrações do dolly
+  console.log('🔄 Executando migrações...');
+  try {
+    await migrateDollySupport();
+    await migrateDollySemiReboque();
+    console.log('✅ Migrações executadas com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao executar migrações:', error);
+    // Não sair do processo, continuar com o que temos
+  }
 
   return db;
 }
@@ -64,7 +77,7 @@ const createTables = async (db) => {
       )
     `);
 
-    // Tabela de caminhões
+    // Tabela de caminhões (com suporte ao dolly)
     await runQuery(`
       CREATE TABLE IF NOT EXISTS trucks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,25 +87,27 @@ const createTables = async (db) => {
         brand TEXT NOT NULL,
         year INTEGER NOT NULL,
         type TEXT NOT NULL,
-        vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta')),
+        vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta', 'dolly')),
         capacity REAL NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // Tabela de conjuntos de veículos
+    // Tabela de conjuntos de veículos (com suporte ao dolly)
     await runQuery(`
       CREATE TABLE IF NOT EXISTS vehicle_sets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado')),
+        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado', 'bitrem', 'dolly_semi_reboque')),
         cavalo_id INTEGER,
         carreta_id INTEGER,
+        dolly_id INTEGER,
         description TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (cavalo_id) REFERENCES trucks (id),
-        FOREIGN KEY (carreta_id) REFERENCES trucks (id)
+        FOREIGN KEY (carreta_id) REFERENCES trucks (id),
+        FOREIGN KEY (dolly_id) REFERENCES trucks (id)
       )
     `);
 
