@@ -1,8 +1,0 @@
-{
-  "short_name": "Cadastro de Motoristas",
-  "name": "Sistema de Cadastro de Motoristas",
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
-} 
