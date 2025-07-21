@@ -38,7 +38,8 @@ const vehicleSetTypes = [
   { value: 'cavalo', label: 'Apenas Cavalo' },
   { value: 'carreta', label: 'Apenas Carreta' },
   { value: 'conjugado', label: 'Conjugado (Cavalo + Carreta)' },
-  { value: 'bitrem', label: 'Bitrem (Cavalo + Carreta + Dolly)' }
+  { value: 'bitrem', label: 'Bitrem (Cavalo + Carreta + Dolly)' },
+  { value: 'dolly_semi_reboque', label: 'Dolly Semi Reboque (Dolly + Carreta)' }
 ];
 
 const VehicleSetList = () => {
@@ -144,6 +145,14 @@ const VehicleSetList = () => {
       }
       if (!formData.dolly_id) {
         newErrors.dolly_id = 'Dolly é obrigatório para bitrem';
+      }
+    }
+    if (formData.type === 'dolly_semi_reboque') {
+      if (!formData.dolly_id) {
+        newErrors.dolly_id = 'Dolly é obrigatório para dolly semi reboque';
+      }
+      if (!formData.carreta_id) {
+        newErrors.carreta_id = 'Carreta é obrigatória para dolly semi reboque';
       }
     }
 
@@ -262,9 +271,9 @@ const VehicleSetList = () => {
     setFormData({
       ...formData,
       type: newType,
-      cavalo_id: newType === 'carreta' ? '' : formData.cavalo_id,
+      cavalo_id: (newType === 'carreta' || newType === 'dolly_semi_reboque') ? '' : formData.cavalo_id,
       carreta_id: newType === 'cavalo' ? '' : formData.carreta_id,
-      dolly_id: newType !== 'bitrem' ? '' : formData.dolly_id
+      dolly_id: (newType !== 'bitrem' && newType !== 'dolly_semi_reboque') ? '' : formData.dolly_id
     });
     setErrors({ ...errors, type: '', cavalo_id: '', carreta_id: '', dolly_id: '' });
   };
@@ -275,6 +284,7 @@ const VehicleSetList = () => {
       case 'carreta': return '📦';
       case 'conjugado': return '🚛📦';
       case 'bitrem': return '🚛📦🔗';
+      case 'dolly_semi_reboque': return '🔗📦';
       default: return '🚛';
     }
   };
@@ -475,7 +485,7 @@ const VehicleSetList = () => {
                   </Grid>
                 )}
 
-                {(formData.type === 'carreta' || formData.type === 'conjugado' || formData.type === 'bitrem') && (
+                {(formData.type === 'carreta' || formData.type === 'conjugado' || formData.type === 'bitrem' || formData.type === 'dolly_semi_reboque') && (
                   <Grid item xs={12}>
                     <FormControl fullWidth error={!!errors.carreta_id}>
                       <InputLabel>Carreta/Reboque</InputLabel>
@@ -483,7 +493,7 @@ const VehicleSetList = () => {
                         value={formData.carreta_id}
                         onChange={(e) => setFormData({ ...formData, carreta_id: e.target.value })}
                         label="Carreta/Reboque"
-                        required={formData.type === 'carreta' || formData.type === 'conjugado' || formData.type === 'bitrem'}
+                        required={formData.type === 'carreta' || formData.type === 'conjugado' || formData.type === 'bitrem' || formData.type === 'dolly_semi_reboque'}
                       >
                         {availableCarretas.map((carreta) => (
                           <MenuItem key={carreta.id} value={carreta.id}>
@@ -496,7 +506,7 @@ const VehicleSetList = () => {
                   </Grid>
                 )}
 
-                {formData.type === 'bitrem' && (
+                {(formData.type === 'bitrem' || formData.type === 'dolly_semi_reboque') && (
                   <Grid item xs={12}>
                     <FormControl fullWidth error={!!errors.dolly_id}>
                       <InputLabel>Dolly</InputLabel>
@@ -504,7 +514,7 @@ const VehicleSetList = () => {
                         value={formData.dolly_id}
                         onChange={(e) => setFormData({ ...formData, dolly_id: e.target.value })}
                         label="Dolly"
-                        required={formData.type === 'bitrem'}
+                        required={formData.type === 'bitrem' || formData.type === 'dolly_semi_reboque'}
                       >
                         {availableDollies.map((dolly) => (
                           <MenuItem key={dolly.id} value={dolly.id}>

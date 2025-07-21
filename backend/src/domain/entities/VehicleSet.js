@@ -2,7 +2,7 @@ class VehicleSet {
   constructor({
     id = null,
     name,
-    type, // 'cavalo', 'carreta', 'conjugado', 'bitrem'
+    type, // 'cavalo', 'carreta', 'conjugado', 'bitrem', 'dolly_semi_reboque'
     cavalo_id = null,
     carreta_id = null,
     dolly_id = null,
@@ -24,8 +24,8 @@ class VehicleSet {
       throw new Error('Nome do conjunto é obrigatório');
     }
     
-    if (!['cavalo', 'carreta', 'conjugado', 'bitrem'].includes(this.type)) {
-      throw new Error('Tipo de conjunto inválido. Use: cavalo, carreta, conjugado ou bitrem');
+    if (!['cavalo', 'carreta', 'conjugado', 'bitrem', 'dolly_semi_reboque'].includes(this.type)) {
+      throw new Error('Tipo de conjunto inválido. Use: cavalo, carreta, conjugado, bitrem ou dolly_semi_reboque');
     }
 
     // Validações específicas por tipo
@@ -61,6 +61,15 @@ class VehicleSet {
         throw new Error('Conjuntos bitrem devem ter cavalo, carreta e dolly');
       }
     }
+
+    if (this.type === 'dolly_semi_reboque') {
+      if (!this.dolly_id || !this.carreta_id) {
+        throw new Error('Conjuntos dolly semi reboque devem ter dolly e carreta');
+      }
+      if (this.cavalo_id) {
+        throw new Error('Conjunto dolly semi reboque não deve ter cavalo associado');
+      }
+    }
   }
 
   // Método para verificar se o conjunto está completo
@@ -69,6 +78,7 @@ class VehicleSet {
     if (this.type === 'carreta') return !!this.carreta_id;
     if (this.type === 'conjugado') return !!(this.cavalo_id && this.carreta_id);
     if (this.type === 'bitrem') return !!(this.cavalo_id && this.carreta_id && this.dolly_id);
+    if (this.type === 'dolly_semi_reboque') return !!(this.dolly_id && this.carreta_id);
     return false;
   }
 
@@ -87,7 +97,8 @@ class VehicleSet {
       'cavalo': 'Cavalo Mecânico',
       'carreta': 'Carreta/Reboque',
       'conjugado': 'Conjunto Conjugado (Cavalo + Carreta)',
-      'bitrem': 'Bitrem (Cavalo + Carreta + Dolly)'
+      'bitrem': 'Bitrem (Cavalo + Carreta + Dolly)',
+      'dolly_semi_reboque': 'Dolly Semi Reboque (Dolly + Carreta)'
     };
     return descriptions[this.type] || this.type;
   }
@@ -95,6 +106,11 @@ class VehicleSet {
   // Método para verificar se é um bitrem
   isBitrem() {
     return this.type === 'bitrem';
+  }
+
+  // Método para verificar se é um dolly semi reboque
+  isDollySemiReboque() {
+    return this.type === 'dolly_semi_reboque';
   }
 
   // Método para obter a capacidade total do conjunto

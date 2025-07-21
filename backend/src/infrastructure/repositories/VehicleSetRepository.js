@@ -21,7 +21,7 @@ class VehicleSetRepository {
       CREATE TABLE IF NOT EXISTS vehicle_sets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado', 'bitrem')),
+        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado', 'bitrem', 'dolly_semi_reboque')),
         cavalo_id INTEGER,
         carreta_id INTEGER,
         dolly_id INTEGER,

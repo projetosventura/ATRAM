@@ -164,7 +164,10 @@ const PublicInspectionForm = ({ token }) => {
               <Typography variant="subtitle1" color="textSecondary">
                 Tipo: {inspectionData.vehicle_info.set_type === 'cavalo' ? 'Apenas Cavalo' : 
                        inspectionData.vehicle_info.set_type === 'carreta' ? 'Apenas Carreta' : 
-                       'Conjugado (Cavalo + Carreta)'}
+                       inspectionData.vehicle_info.set_type === 'conjugado' ? 'Conjugado (Cavalo + Carreta)' :
+                       inspectionData.vehicle_info.set_type === 'bitrem' ? 'Bitrem (Cavalo + Carreta + Dolly)' :
+                       inspectionData.vehicle_info.set_type === 'dolly_semi_reboque' ? 'Dolly Semi Reboque (Dolly + Carreta)' :
+                       inspectionData.vehicle_info.set_type}
               </Typography>
               {inspectionData.vehicle_info.cavalo && (
                 <Typography variant="subtitle1">
@@ -174,6 +177,11 @@ const PublicInspectionForm = ({ token }) => {
               {inspectionData.vehicle_info.carreta && (
                 <Typography variant="subtitle1">
                   Carreta: {inspectionData.vehicle_info.carreta.plate} - {inspectionData.vehicle_info.carreta.brand} {inspectionData.vehicle_info.carreta.model}
+                </Typography>
+              )}
+              {inspectionData.vehicle_info.dolly && (
+                <Typography variant="subtitle1">
+                  Dolly: {inspectionData.vehicle_info.dolly.plate} - {inspectionData.vehicle_info.dolly.brand} {inspectionData.vehicle_info.dolly.model}
                 </Typography>
               )}
             </>
