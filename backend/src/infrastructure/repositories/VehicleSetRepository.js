@@ -21,13 +21,15 @@ class VehicleSetRepository {
       CREATE TABLE IF NOT EXISTS vehicle_sets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado')),
+        type TEXT NOT NULL CHECK(type IN ('cavalo', 'carreta', 'conjugado', 'bitrem')),
         cavalo_id INTEGER,
         carreta_id INTEGER,
+        dolly_id INTEGER,
         description TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (cavalo_id) REFERENCES trucks (id),
-        FOREIGN KEY (carreta_id) REFERENCES trucks (id)
+        FOREIGN KEY (carreta_id) REFERENCES trucks (id),
+        FOREIGN KEY (dolly_id) REFERENCES trucks (id)
       )
     `;
     return new Promise((resolve, reject) => {
@@ -46,13 +48,13 @@ class VehicleSetRepository {
   async create(vehicleSet) {
     console.log('Creating vehicle set:', vehicleSet);
     const sql = `
-      INSERT INTO vehicle_sets (name, type, cavalo_id, carreta_id, description)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO vehicle_sets (name, type, cavalo_id, carreta_id, dolly_id, description)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [vehicleSet.name, vehicleSet.type, vehicleSet.cavalo_id, vehicleSet.carreta_id, vehicleSet.description],
+        [vehicleSet.name, vehicleSet.type, vehicleSet.cavalo_id, vehicleSet.carreta_id, vehicleSet.dolly_id, vehicleSet.description],
         function(err) {
           if (err) {
             console.error('Error creating vehicle set:', err);
@@ -69,13 +71,13 @@ class VehicleSetRepository {
   async update(id, vehicleSet) {
     const sql = `
       UPDATE vehicle_sets
-      SET name = ?, type = ?, cavalo_id = ?, carreta_id = ?, description = ?
+      SET name = ?, type = ?, cavalo_id = ?, carreta_id = ?, dolly_id = ?, description = ?
       WHERE id = ?
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [vehicleSet.name, vehicleSet.type, vehicleSet.cavalo_id, vehicleSet.carreta_id, vehicleSet.description, id],
+        [vehicleSet.name, vehicleSet.type, vehicleSet.cavalo_id, vehicleSet.carreta_id, vehicleSet.dolly_id, vehicleSet.description, id],
         (err) => {
           if (err) reject(err);
           else resolve({ ...vehicleSet, id });
@@ -134,10 +136,12 @@ class VehicleSetRepository {
       SELECT 
         vs.*,
         c.plate as cavalo_plate, c.model as cavalo_model, c.brand as cavalo_brand,
-        cr.plate as carreta_plate, cr.model as carreta_model, cr.brand as carreta_brand
+        cr.plate as carreta_plate, cr.model as carreta_model, cr.brand as carreta_brand,
+        d.plate as dolly_plate, d.model as dolly_model, d.brand as dolly_brand
       FROM vehicle_sets vs
       LEFT JOIN trucks c ON vs.cavalo_id = c.id
       LEFT JOIN trucks cr ON vs.carreta_id = cr.id
+      LEFT JOIN trucks d ON vs.dolly_id = d.id
       WHERE 1=1
     `;
     const params = [];
@@ -165,6 +169,7 @@ class VehicleSetRepository {
               type: row.type,
               cavalo_id: row.cavalo_id,
               carreta_id: row.carreta_id,
+              dolly_id: row.dolly_id,
               description: row.description,
               created_at: row.created_at
             });
@@ -182,6 +187,12 @@ class VehicleSetRepository {
               brand: row.carreta_brand
             } : null;
 
+            vehicleSet.dolly_info = row.dolly_id ? {
+              plate: row.dolly_plate,
+              model: row.dolly_model,
+              brand: row.dolly_brand
+            } : null;
+
             return vehicleSet;
           });
           resolve(vehicleSets);
@@ -192,8 +203,8 @@ class VehicleSetRepository {
 
   // Método para verificar se um veículo já está sendo usado em algum conjunto
   async isVehicleInUse(vehicleId, excludeSetId = null) {
-    let sql = 'SELECT id FROM vehicle_sets WHERE (cavalo_id = ? OR carreta_id = ?)';
-    const params = [vehicleId, vehicleId];
+    let sql = 'SELECT id FROM vehicle_sets WHERE (cavalo_id = ? OR carreta_id = ? OR dolly_id = ?)';
+    const params = [vehicleId, vehicleId, vehicleId];
     
     if (excludeSetId) {
       sql += ' AND id != ?';

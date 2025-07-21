@@ -65,6 +65,15 @@ class VehicleSetController {
       throw error;
     }
   }
+
+  async getAvailableDollies(excludeSetId) {
+    try {
+      return await this.vehicleSetService.getAvailableDollies(excludeSetId);
+    } catch (error) {
+      console.error('Erro ao buscar dollies disponíveis:', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = VehicleSetController; 

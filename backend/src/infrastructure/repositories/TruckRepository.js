@@ -26,7 +26,7 @@ class TruckRepository {
         brand TEXT NOT NULL,
         year INTEGER NOT NULL,
         type TEXT NOT NULL,
-        vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta')),
+        vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta', 'dolly')),
         capacity REAL NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP

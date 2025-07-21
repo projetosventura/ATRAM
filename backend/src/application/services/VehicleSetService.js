@@ -93,9 +93,28 @@ class VehicleSetService {
       }
     }
 
+    // Verificar se o dolly existe e é da categoria correta
+    if (vehicleSet.dolly_id) {
+      const dolly = await this.truckRepository.findById(vehicleSet.dolly_id);
+      if (!dolly) {
+        throw new Error('Dolly não encontrado');
+      }
+      if (dolly.vehicle_category !== 'dolly') {
+        throw new Error('O veículo selecionado como dolly deve ser da categoria "dolly"');
+      }
+
+      // Verificar se o dolly já está sendo usado em outro conjunto
+      const dollyInUse = await this.vehicleSetRepository.isVehicleInUse(vehicleSet.dolly_id, excludeSetId);
+      if (dollyInUse) {
+        throw new Error('Este dolly já está sendo usado em outro conjunto');
+      }
+    }
+
     // Verificar se o mesmo veículo não está sendo usado duas vezes
-    if (vehicleSet.cavalo_id && vehicleSet.carreta_id && vehicleSet.cavalo_id === vehicleSet.carreta_id) {
-      throw new Error('O mesmo veículo não pode ser usado como cavalo e carreta ao mesmo tempo');
+    const vehicleIds = [vehicleSet.cavalo_id, vehicleSet.carreta_id, vehicleSet.dolly_id].filter(Boolean);
+    const uniqueIds = new Set(vehicleIds);
+    if (vehicleIds.length !== uniqueIds.size) {
+      throw new Error('O mesmo veículo não pode ser usado em múltiplas funções no mesmo conjunto');
     }
   }
 
@@ -126,6 +145,11 @@ class VehicleSetService {
     return await this.getAvailableVehiclesByCategory('carreta', excludeSetId);
   }
 
+  // Método para obter todos os dollies disponíveis
+  async getAvailableDollies(excludeSetId = null) {
+    return await this.getAvailableVehiclesByCategory('dolly', excludeSetId);
+  }
+
   // Método para obter informações completas de um conjunto
   async getVehicleSetWithDetails(id) {
     const vehicleSet = await this.vehicleSetRepository.findById(id);
@@ -140,6 +164,10 @@ class VehicleSetService {
 
     if (vehicleSet.carreta_id) {
       vehicleSet.carreta = await this.truckRepository.findById(vehicleSet.carreta_id);
+    }
+
+    if (vehicleSet.dolly_id) {
+      vehicleSet.dolly = await this.truckRepository.findById(vehicleSet.dolly_id);
     }
 
     return vehicleSet;

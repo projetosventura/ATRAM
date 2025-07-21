@@ -43,7 +43,8 @@ const vehicleTypes = [
 
 const vehicleCategories = [
   { value: 'cavalo', label: 'Cavalo Mecânico' },
-  { value: 'carreta', label: 'Carreta/Reboque' }
+  { value: 'carreta', label: 'Carreta/Reboque' },
+  { value: 'dolly', label: 'Dolly (Implemento Rodoviário)' }
 ];
 
 const TruckList = () => {

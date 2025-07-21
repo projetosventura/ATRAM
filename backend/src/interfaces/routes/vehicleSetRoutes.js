@@ -75,6 +75,17 @@ function createVehicleSetRouter(vehicleSetController) {
     }
   });
 
+  // Buscar dollies disponíveis
+  router.get('/vehicle-sets/available/dollies', async (req, res) => {
+    try {
+      const excludeSetId = req.query.excludeSetId || null;
+      const dollies = await vehicleSetController.getAvailableDollies(excludeSetId);
+      res.json(dollies);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   return router;
 }
 

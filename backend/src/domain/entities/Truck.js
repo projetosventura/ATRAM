@@ -7,7 +7,7 @@ class Truck {
     brand,
     year,
     type,
-    vehicle_category, // 'cavalo', 'carreta' 
+    vehicle_category, // 'cavalo', 'carreta', 'dolly'
     capacity,
     photo = null,
     created_at = new Date()
@@ -19,7 +19,7 @@ class Truck {
     this.brand = brand;
     this.year = year;
     this.type = type; // tipo antigo: Caminhão Baú, Carreta, etc.
-    this.vehicle_category = vehicle_category; // nova categoria: cavalo ou carreta
+    this.vehicle_category = vehicle_category; // nova categoria: cavalo, carreta ou dolly
     this.capacity = capacity;
     this.photo = photo;
     this.created_at = created_at;
@@ -44,8 +44,8 @@ class Truck {
     if (!this.type) {
       throw new Error('Tipo de caminhão é obrigatório');
     }
-    if (!this.vehicle_category || !['cavalo', 'carreta'].includes(this.vehicle_category)) {
-      throw new Error('Categoria do veículo é obrigatória (cavalo ou carreta)');
+    if (!this.vehicle_category || !['cavalo', 'carreta', 'dolly'].includes(this.vehicle_category)) {
+      throw new Error('Categoria do veículo é obrigatória (cavalo, carreta ou dolly)');
     }
     if (!this.capacity || this.capacity <= 0) {
       throw new Error('Capacidade deve ser maior que zero');
@@ -62,11 +62,17 @@ class Truck {
     return this.vehicle_category === 'carreta';
   }
 
+  // Método para verificar se é um dolly
+  isDolly() {
+    return this.vehicle_category === 'dolly';
+  }
+
   // Método para obter descrição da categoria
   getCategoryDescription() {
     const descriptions = {
       'cavalo': 'Cavalo Mecânico',
-      'carreta': 'Carreta/Reboque'
+      'carreta': 'Carreta/Reboque',
+      'dolly': 'Dolly (Implemento Rodoviário)'
     };
     return descriptions[this.vehicle_category] || this.vehicle_category;
   }

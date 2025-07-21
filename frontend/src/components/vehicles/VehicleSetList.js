@@ -37,7 +37,8 @@ const API_URL = '/api';
 const vehicleSetTypes = [
   { value: 'cavalo', label: 'Apenas Cavalo' },
   { value: 'carreta', label: 'Apenas Carreta' },
-  { value: 'conjugado', label: 'Conjugado (Cavalo + Carreta)' }
+  { value: 'conjugado', label: 'Conjugado (Cavalo + Carreta)' },
+  { value: 'bitrem', label: 'Bitrem (Cavalo + Carreta + Dolly)' }
 ];
 
 const VehicleSetList = () => {
@@ -45,6 +46,7 @@ const VehicleSetList = () => {
   const [drivers, setDrivers] = useState([]);
   const [availableCavalos, setAvailableCavalos] = useState([]);
   const [availableCarretas, setAvailableCarretas] = useState([]);
+  const [availableDollies, setAvailableDollies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingVehicleSet, setEditingVehicleSet] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -62,6 +64,7 @@ const VehicleSetList = () => {
     type: '',
     cavalo_id: '',
     carreta_id: '',
+    dolly_id: '',
     description: ''
   });
 
@@ -90,12 +93,14 @@ const VehicleSetList = () => {
 
   const fetchAvailableVehicles = async (excludeSetId = null) => {
     try {
-      const [cavalosResponse, carretasResponse] = await Promise.all([
+      const [cavalosResponse, carretasResponse, dolliesResponse] = await Promise.all([
         axios.get(`${API_URL}/vehicle-sets/available/cavalos${excludeSetId ? `?excludeSetId=${excludeSetId}` : ''}`),
-        axios.get(`${API_URL}/vehicle-sets/available/carretas${excludeSetId ? `?excludeSetId=${excludeSetId}` : ''}`)
+        axios.get(`${API_URL}/vehicle-sets/available/carretas${excludeSetId ? `?excludeSetId=${excludeSetId}` : ''}`),
+        axios.get(`${API_URL}/vehicle-sets/available/dollies${excludeSetId ? `?excludeSetId=${excludeSetId}` : ''}`)
       ]);
       setAvailableCavalos(cavalosResponse.data);
       setAvailableCarretas(carretasResponse.data);
+      setAvailableDollies(dolliesResponse.data);
     } catch (error) {
       console.error('Error fetching available vehicles:', error);
     }
@@ -130,6 +135,17 @@ const VehicleSetList = () => {
         newErrors.carreta_id = 'Carreta é obrigatória para conjugado';
       }
     }
+    if (formData.type === 'bitrem') {
+      if (!formData.cavalo_id) {
+        newErrors.cavalo_id = 'Cavalo é obrigatório para bitrem';
+      }
+      if (!formData.carreta_id) {
+        newErrors.carreta_id = 'Carreta é obrigatória para bitrem';
+      }
+      if (!formData.dolly_id) {
+        newErrors.dolly_id = 'Dolly é obrigatório para bitrem';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -148,7 +164,8 @@ const VehicleSetList = () => {
         type: formData.type,
         description: formData.description.trim() || null,
         cavalo_id: formData.cavalo_id || null,
-        carreta_id: formData.carreta_id || null
+        carreta_id: formData.carreta_id || null,
+        dolly_id: formData.dolly_id || null
       };
 
       if (editingVehicleSet) {
@@ -175,6 +192,7 @@ const VehicleSetList = () => {
       type: '',
       cavalo_id: '',
       carreta_id: '',
+      dolly_id: '',
       description: ''
     });
     setEditingVehicleSet(null);
@@ -201,6 +219,7 @@ const VehicleSetList = () => {
       type: vehicleSet.type,
       cavalo_id: vehicleSet.cavalo_id || '',
       carreta_id: vehicleSet.carreta_id || '',
+      dolly_id: vehicleSet.dolly_id || '',
       description: vehicleSet.description || ''
     });
     fetchAvailableVehicles(vehicleSet.id);
@@ -244,9 +263,10 @@ const VehicleSetList = () => {
       ...formData,
       type: newType,
       cavalo_id: newType === 'carreta' ? '' : formData.cavalo_id,
-      carreta_id: newType === 'cavalo' ? '' : formData.carreta_id
+      carreta_id: newType === 'cavalo' ? '' : formData.carreta_id,
+      dolly_id: newType !== 'bitrem' ? '' : formData.dolly_id
     });
-    setErrors({ ...errors, type: '', cavalo_id: '', carreta_id: '' });
+    setErrors({ ...errors, type: '', cavalo_id: '', carreta_id: '', dolly_id: '' });
   };
 
   const getVehicleSetIcon = (type) => {
@@ -254,6 +274,7 @@ const VehicleSetList = () => {
       case 'cavalo': return '🚛';
       case 'carreta': return '📦';
       case 'conjugado': return '🚛📦';
+      case 'bitrem': return '🚛📦🔗';
       default: return '🚛';
     }
   };
@@ -265,6 +286,9 @@ const VehicleSetList = () => {
     }
     if (vehicleSet.carreta_info) {
       parts.push(`Carreta: ${vehicleSet.carreta_info.plate} (${vehicleSet.carreta_info.brand} ${vehicleSet.carreta_info.model})`);
+    }
+    if (vehicleSet.dolly_info) {
+      parts.push(`Dolly: ${vehicleSet.dolly_info.plate} (${vehicleSet.dolly_info.brand} ${vehicleSet.dolly_info.model})`);
     }
     return parts.join(' | ');
   };
@@ -430,7 +454,7 @@ const VehicleSetList = () => {
                   </FormControl>
                 </Grid>
 
-                {(formData.type === 'cavalo' || formData.type === 'conjugado') && (
+                {(formData.type === 'cavalo' || formData.type === 'conjugado' || formData.type === 'bitrem') && (
                   <Grid item xs={12}>
                     <FormControl fullWidth error={!!errors.cavalo_id}>
                       <InputLabel>Cavalo Mecânico</InputLabel>
@@ -438,7 +462,7 @@ const VehicleSetList = () => {
                         value={formData.cavalo_id}
                         onChange={(e) => setFormData({ ...formData, cavalo_id: e.target.value })}
                         label="Cavalo Mecânico"
-                        required={formData.type === 'cavalo' || formData.type === 'conjugado'}
+                        required={formData.type === 'cavalo' || formData.type === 'conjugado' || formData.type === 'bitrem'}
                       >
                         {availableCavalos.map((cavalo) => (
                           <MenuItem key={cavalo.id} value={cavalo.id}>
@@ -451,7 +475,7 @@ const VehicleSetList = () => {
                   </Grid>
                 )}
 
-                {(formData.type === 'carreta' || formData.type === 'conjugado') && (
+                {(formData.type === 'carreta' || formData.type === 'conjugado' || formData.type === 'bitrem') && (
                   <Grid item xs={12}>
                     <FormControl fullWidth error={!!errors.carreta_id}>
                       <InputLabel>Carreta/Reboque</InputLabel>
@@ -459,7 +483,7 @@ const VehicleSetList = () => {
                         value={formData.carreta_id}
                         onChange={(e) => setFormData({ ...formData, carreta_id: e.target.value })}
                         label="Carreta/Reboque"
-                        required={formData.type === 'carreta' || formData.type === 'conjugado'}
+                        required={formData.type === 'carreta' || formData.type === 'conjugado' || formData.type === 'bitrem'}
                       >
                         {availableCarretas.map((carreta) => (
                           <MenuItem key={carreta.id} value={carreta.id}>
@@ -468,6 +492,27 @@ const VehicleSetList = () => {
                         ))}
                       </Select>
                       {errors.carreta_id && <FormHelperText>{errors.carreta_id}</FormHelperText>}
+                    </FormControl>
+                  </Grid>
+                )}
+
+                {formData.type === 'bitrem' && (
+                  <Grid item xs={12}>
+                    <FormControl fullWidth error={!!errors.dolly_id}>
+                      <InputLabel>Dolly</InputLabel>
+                      <Select
+                        value={formData.dolly_id}
+                        onChange={(e) => setFormData({ ...formData, dolly_id: e.target.value })}
+                        label="Dolly"
+                        required={formData.type === 'bitrem'}
+                      >
+                        {availableDollies.map((dolly) => (
+                          <MenuItem key={dolly.id} value={dolly.id}>
+                            {dolly.plate} - {dolly.brand} {dolly.model} ({dolly.year})
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {errors.dolly_id && <FormHelperText>{errors.dolly_id}</FormHelperText>}
                     </FormControl>
                   </Grid>
                 )}
