@@ -3,17 +3,25 @@ const path = require('path');
 const Driver = require('../../domain/entities/Driver');
 
 class DriverRepository {
-  constructor() {
-    const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
-    this.db = new sqlite3.Database(dbPath, (err) => {
-      if (err) {
-        console.error('Error connecting to database:', err);
-        throw err;
-      } else {
-        console.log('Connected to SQLite database at:', dbPath);
-        this.createTable();
-      }
-    });
+  constructor(db = null) {
+    if (db) {
+      // Usar conexão compartilhada se fornecida
+      this.db = db;
+      console.log('DriverRepository usando conexão compartilhada');
+      // Não chamar createTable aqui para evitar conflitos com a inicialização principal
+    } else {
+      // Fallback para conexão própria
+      const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
+      this.db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+          console.error('Error connecting to database:', err);
+          throw err;
+        } else {
+          console.log('Connected to SQLite database at:', dbPath);
+          this.createTable();
+        }
+      });
+    }
   }
 
   createTable() {
@@ -21,9 +29,7 @@ class DriverRepository {
       CREATE TABLE IF NOT EXISTS drivers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        cnh TEXT NOT NULL,
-        cnhExpirationDate TEXT NOT NULL,
-        vehicleType TEXT NOT NULL,
+        cpf TEXT NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -44,13 +50,13 @@ class DriverRepository {
   async create(driver) {
     console.log('Creating driver:', driver);
     const sql = `
-      INSERT INTO drivers (name, cnh, cnhExpirationDate, vehicleType, photo)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO drivers (name, cpf, photo)
+      VALUES (?, ?, ?)
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [driver.name, driver.cnh, driver.cnhExpirationDate, driver.vehicleType, driver.photo],
+        [driver.name, driver.cpf, driver.photo],
         function(err) {
           if (err) {
             console.error('Error creating driver:', err);
@@ -67,13 +73,13 @@ class DriverRepository {
   async update(id, driver) {
     const sql = `
       UPDATE drivers
-      SET name = ?, cnh = ?, cnhExpirationDate = ?, vehicleType = ?, photo = ?
+      SET name = ?, cpf = ?, photo = ?
       WHERE id = ?
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [driver.name, driver.cnh, driver.cnhExpirationDate, driver.vehicleType, driver.photo, id],
+        [driver.name, driver.cpf, driver.photo, id],
         (err) => {
           if (err) reject(err);
           else resolve({ ...driver, id });
@@ -111,14 +117,9 @@ class DriverRepository {
       params.push(`%${filters.name}%`);
     }
 
-    if (filters.cnh) {
-      sql += ' AND cnh LIKE ?';
-      params.push(`%${filters.cnh}%`);
-    }
-
-    if (filters.vehicleType) {
-      sql += ' AND vehicleType = ?';
-      params.push(filters.vehicleType);
+    if (filters.cpf) {
+      sql += ' AND cpf LIKE ?';
+      params.push(`%${filters.cpf}%`);
     }
 
     sql += ' ORDER BY created_at DESC';

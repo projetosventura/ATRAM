@@ -571,7 +571,7 @@ const VehicleSetList = () => {
                 >
                   {drivers.map((driver) => (
                     <MenuItem key={driver.id} value={driver.id}>
-                      {driver.name} - CNH: {driver.cnh}
+                      {driver.name} - CPF: {driver.cpf}
                     </MenuItem>
                   ))}
                 </Select>

@@ -3,17 +3,24 @@ const path = require('path');
 const Truck = require('../../domain/entities/Truck');
 
 class TruckRepository {
-  constructor() {
-    const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
-    this.db = new sqlite3.Database(dbPath, (err) => {
-      if (err) {
-        console.error('Error connecting to database:', err);
-        throw err;
-      } else {
-        console.log('Connected to SQLite database at:', dbPath);
-        this.createTable();
-      }
-    });
+  constructor(db = null) {
+    if (db) {
+      // Usar conexão compartilhada se fornecida
+      this.db = db;
+      console.log('TruckRepository usando conexão compartilhada');
+    } else {
+      // Fallback para conexão própria
+      const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
+      this.db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+          console.error('Error connecting to database:', err);
+          throw err;
+        } else {
+          console.log('Connected to SQLite database at:', dbPath);
+          this.createTable();
+        }
+      });
+    }
   }
 
   createTable() {
@@ -27,7 +34,6 @@ class TruckRepository {
         year INTEGER NOT NULL,
         type TEXT NOT NULL,
         vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta', 'dolly')),
-        capacity REAL NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -48,13 +54,13 @@ class TruckRepository {
   async create(truck) {
     console.log('Creating truck:', truck);
     const sql = `
-      INSERT INTO trucks (plate, chassis, model, brand, year, type, vehicle_category, capacity, photo)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO trucks (plate, chassis, model, brand, year, type, vehicle_category, photo)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.vehicle_category, truck.capacity, truck.photo],
+        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.vehicle_category, truck.photo],
         function(err) {
           if (err) {
             console.error('Error creating truck:', err);
@@ -71,13 +77,13 @@ class TruckRepository {
   async update(id, truck) {
     const sql = `
       UPDATE trucks
-      SET plate = ?, chassis = ?, model = ?, brand = ?, year = ?, type = ?, vehicle_category = ?, capacity = ?, photo = ?
+      SET plate = ?, chassis = ?, model = ?, brand = ?, year = ?, type = ?, vehicle_category = ?, photo = ?
       WHERE id = ?
     `;
     return new Promise((resolve, reject) => {
       this.db.run(
         sql,
-        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.vehicle_category, truck.capacity, truck.photo, id],
+        [truck.plate, truck.chassis, truck.model, truck.brand, truck.year, truck.type, truck.vehicle_category, truck.photo, id],
         (err) => {
           if (err) reject(err);
           else resolve({ ...truck, id });

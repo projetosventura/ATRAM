@@ -1,10 +1,28 @@
+const sqlite3 = require('sqlite3').verbose();
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs').promises;
+const InspectionRequest = require('../../domain/entities/InspectionRequest');
 
 class InspectionRequestRepository {
-  constructor() {
-    this.db = global.db;
+  constructor(db = null) {
+    if (db) {
+      // Usar conexão compartilhada se fornecida
+      this.db = db;
+      console.log('InspectionRequestRepository usando conexão compartilhada');
+    } else {
+      // Fallback para conexão própria
+      const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
+      this.db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+          console.error('Error connecting to database:', err);
+          throw err;
+        } else {
+          console.log('Connected to SQLite database at:', dbPath);
+          this.createTable();
+        }
+      });
+    }
   }
 
   async createTable() {

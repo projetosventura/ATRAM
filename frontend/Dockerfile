@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:1.24-alpine
 
 # Remover a configuração padrão do nginx
 RUN rm /etc/nginx/conf.d/default.conf

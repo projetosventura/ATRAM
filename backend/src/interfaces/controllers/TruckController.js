@@ -25,7 +25,6 @@ class TruckController {
     try {
       // Converter campos numéricos
       if (truckData.year) truckData.year = parseInt(truckData.year);
-      if (truckData.capacity) truckData.capacity = parseFloat(truckData.capacity);
 
       return await this.truckService.createTruck(truckData);
     } catch (error) {
@@ -38,7 +37,6 @@ class TruckController {
     try {
       // Converter campos numéricos
       if (truckData.year) truckData.year = parseInt(truckData.year);
-      if (truckData.capacity) truckData.capacity = parseFloat(truckData.capacity);
 
       return await this.truckService.updateTruck(id, truckData);
     } catch (error) {

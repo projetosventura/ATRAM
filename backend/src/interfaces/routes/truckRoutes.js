@@ -55,26 +55,44 @@ function createTruckRouter(truckController) {
   // Criar novo caminhão
   router.post('/trucks', upload.single('photo'), async (req, res) => {
     try {
-      const truck = await truckController.createTruck({
-        ...req.body,
+      const truckData = {
+        plate: req.body.plate?.toUpperCase().trim(),
+        chassis: req.body.chassis?.toUpperCase().trim(),
+        model: req.body.model?.trim(),
+        brand: req.body.brand?.trim(),
+        year: parseInt(req.body.year),
+        type: req.body.type?.trim(),
+        vehicle_category: req.body.vehicle_category?.trim(),
         photo: req.file ? `/api/uploads/${req.file.filename}` : null
-      });
+      };
+
+      const truck = await truckController.createTruck(truckData);
       res.status(201).json(truck);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error('Erro ao criar caminhão:', error);
+      res.status(error.status || 400).json({ error: error.message });
     }
   });
 
   // Atualizar caminhão
   router.put('/trucks/:id', upload.single('photo'), async (req, res) => {
     try {
-      const truck = await truckController.updateTruck(req.params.id, {
-        ...req.body,
+      const truckData = {
+        plate: req.body.plate?.toUpperCase().trim(),
+        chassis: req.body.chassis?.toUpperCase().trim(),
+        model: req.body.model?.trim(),
+        brand: req.body.brand?.trim(),
+        year: parseInt(req.body.year),
+        type: req.body.type?.trim(),
+        vehicle_category: req.body.vehicle_category?.trim(),
         photo: req.file ? `/api/uploads/${req.file.filename}` : undefined
-      });
+      };
+
+      const truck = await truckController.updateTruck(req.params.id, truckData);
       res.json(truck);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      console.error('Erro ao atualizar caminhão:', error);
+      res.status(error.status || 400).json({ error: error.message });
     }
   });
 

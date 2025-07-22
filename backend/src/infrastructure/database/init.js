@@ -1,8 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
-const migrateDollySupport = require('./migrate-dolly-support');
-const migrateDollySemiReboque = require('./migrate-dolly-semi-reboque');
 
 async function initializeDatabase() {
   const dbPath = path.join(process.cwd(), 'data', 'database.sqlite');
@@ -34,16 +32,8 @@ async function initializeDatabase() {
   // Criar tabelas
   await createTables(db);
 
-  // Executar migrações do dolly
-  console.log('🔄 Executando migrações...');
-  try {
-    await migrateDollySupport();
-    await migrateDollySemiReboque();
-    console.log('✅ Migrações executadas com sucesso!');
-  } catch (error) {
-    console.error('❌ Erro ao executar migrações:', error);
-    // Não sair do processo, continuar com o que temos
-  }
+  // Migrações removidas para evitar conflitos com campo capacity
+  console.log('✅ Estrutura do banco verificada');
 
   return db;
 }
@@ -69,9 +59,7 @@ const createTables = async (db) => {
       CREATE TABLE IF NOT EXISTS drivers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        cnh TEXT NOT NULL UNIQUE,
-        cnh_expiration_date DATE NOT NULL,
-        vehicle_type TEXT NOT NULL,
+        cpf TEXT NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -88,7 +76,6 @@ const createTables = async (db) => {
         year INTEGER NOT NULL,
         type TEXT NOT NULL,
         vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta', 'dolly')),
-        capacity REAL NOT NULL,
         photo TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )

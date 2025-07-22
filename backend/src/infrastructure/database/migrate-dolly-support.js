@@ -20,7 +20,6 @@ async function migrateDollySupport() {
           year INTEGER NOT NULL,
           type TEXT NOT NULL,
           vehicle_category TEXT NOT NULL CHECK(vehicle_category IN ('cavalo', 'carreta', 'dolly')),
-          capacity REAL NOT NULL,
           photo TEXT,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -41,7 +40,7 @@ async function migrateDollySupport() {
                  WHEN vehicle_category IS NULL THEN 'cavalo'
                  ELSE vehicle_category 
                END as vehicle_category,
-               capacity, photo, created_at
+               photo, created_at
         FROM trucks
       `, (err) => {
         if (err) {

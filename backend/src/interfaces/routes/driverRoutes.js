@@ -36,9 +36,7 @@ function createDriverRouter(driverController) {
     try {
       const driverData = {
         name: req.body.name.trim(),
-        cnh: req.body.cnh.replace(/\D/g, ''),
-        cnhExpirationDate: req.body.cnhExpirationDate,
-        vehicleType: req.body.vehicleType,
+        cpf: req.body.cpf.replace(/\D/g, ''),
         photo: req.file ? `/api/uploads/${req.file.filename}` : null
       };
 
@@ -54,9 +52,7 @@ function createDriverRouter(driverController) {
     try {
       const driverData = {
         name: req.body.name?.trim(),
-        cnh: req.body.cnh?.replace(/\D/g, ''),
-        cnhExpirationDate: req.body.cnhExpirationDate,
-        vehicleType: req.body.vehicleType,
+        cpf: req.body.cpf?.replace(/\D/g, ''),
         photo: req.file ? `/api/uploads/${req.file.filename}` : undefined
       };
 

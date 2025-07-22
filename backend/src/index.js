@@ -68,20 +68,21 @@ async function startServer() {
       }
     }));
 
-    // Dependency Injection
-    const driverRepository = new DriverRepository();
+    // Dependency Injection com conexão compartilhada
+    console.log('🔗 Inicializando repositórios com conexão compartilhada...');
+    const driverRepository = new DriverRepository(db);
     const driverService = new DriverService(driverRepository);
     const driverController = new DriverController(driverService);
 
-    const truckRepository = new TruckRepository();
+    const truckRepository = new TruckRepository(db);
     const truckService = new TruckService(truckRepository);
     const truckController = new TruckController(truckService);
 
-    const vehicleSetRepository = new VehicleSetRepository();
+    const vehicleSetRepository = new VehicleSetRepository(db);
     const vehicleSetService = new VehicleSetService(vehicleSetRepository, truckRepository);
     const vehicleSetController = new VehicleSetController(vehicleSetService);
 
-    const inspectionRequestRepository = new InspectionRequestRepository();
+    const inspectionRequestRepository = new InspectionRequestRepository(db);
     const inspectionRequestService = new InspectionRequestService(
       inspectionRequestRepository,
       truckRepository,

@@ -28,15 +28,6 @@ import axios from 'axios';
 
 const API_URL = '/api';
 
-const vehicleTypes = [
-  'Caminhão Baú',
-  'Caminhão Tanque',
-  'Carreta',
-  'Bitrem',
-  'VUC',
-  'Outros'
-];
-
 const DriverList = () => {
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,15 +35,12 @@ const DriverList = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [filters, setFilters] = useState({
     name: '',
-    cnh: '',
-    vehicleType: ''
+    cpf: ''
   });
 
   const [formData, setFormData] = useState({
     name: '',
-    cnh: '',
-    cnhExpirationDate: '',
-    vehicleType: '',
+    cpf: '',
     photo: null
   });
 
@@ -60,8 +48,7 @@ const DriverList = () => {
     try {
       const params = new URLSearchParams();
       if (filters.name) params.append('name', filters.name);
-      if (filters.cnh) params.append('cnh', filters.cnh);
-      if (filters.vehicleType) params.append('vehicleType', filters.vehicleType);
+      if (filters.cpf) params.append('cpf', filters.cpf);
 
       const response = await axios.get(`${API_URL}/drivers?${params.toString()}`);
       setDrivers(response.data);
@@ -98,9 +85,7 @@ const DriverList = () => {
       
       setFormData({
         name: '',
-        cnh: '',
-        cnhExpirationDate: '',
-        vehicleType: '',
+        cpf: '',
         photo: null
       });
       setEditingDriver(null);
@@ -130,9 +115,7 @@ const DriverList = () => {
     setEditingDriver(driver);
     setFormData({
       name: driver.name,
-      cnh: driver.cnh,
-      cnhExpirationDate: driver.cnhExpirationDate,
-      vehicleType: driver.vehicleType,
+      cpf: driver.cpf,
       photo: null
     });
     setOpenDialog(true);
@@ -145,8 +128,7 @@ const DriverList = () => {
   const clearFilters = () => {
     setFilters({
       name: '',
-      cnh: '',
-      vehicleType: ''
+      cpf: ''
     });
   };
 
@@ -160,7 +142,7 @@ const DriverList = () => {
         <Card sx={{ mb: 4 }}>
           <CardContent>
             <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   fullWidth
                   label="Buscar por Nome"
@@ -175,31 +157,15 @@ const DriverList = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   fullWidth
-                  label="Buscar por CNH"
-                  value={filters.cnh}
-                  onChange={(e) => setFilters({ ...filters, cnh: e.target.value })}
+                  label="Buscar por CPF"
+                  value={filters.cpf}
+                  onChange={(e) => setFilters({ ...filters, cpf: e.target.value })}
                 />
               </Grid>
-              <Grid item xs={12} sm={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Tipo de Veículo"
-                  value={filters.vehicleType}
-                  onChange={(e) => setFilters({ ...filters, vehicleType: e.target.value })}
-                >
-                  <MenuItem value="">Todos</MenuItem>
-                  {vehicleTypes.map((type) => (
-                    <MenuItem key={type} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={3}>
+              <Grid item xs={12} sm={4}>
                 <Button
                   variant="outlined"
                   startIcon={<ClearIcon />}
@@ -221,9 +187,7 @@ const DriverList = () => {
               setEditingDriver(null);
               setFormData({
                 name: '',
-                cnh: '',
-                cnhExpirationDate: '',
-                vehicleType: '',
+                cpf: '',
                 photo: null
               });
               setOpenDialog(true);
@@ -236,26 +200,24 @@ const DriverList = () => {
         <Grid container spacing={3}>
           {drivers.map((driver) => (
             <Grid item xs={12} sm={6} md={4} key={driver.id}>
-              <Card>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {driver.photo && (
                   <CardMedia
                     component="img"
                     height="200"
-                    image={driver.photo}
+                    image={`/api${driver.photo}`}
                     alt={`Foto de ${driver.name}`}
                     sx={{ objectFit: 'cover' }}
                   />
                 )}
-                <CardContent>
-                  <Typography variant="h6">{driver.name}</Typography>
-                  <Typography color="textSecondary">CNH: {driver.cnh}</Typography>
-                  <Typography color="textSecondary">
-                    Validade CNH: {new Date(driver.cnhExpirationDate).toLocaleDateString()}
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography gutterBottom variant="h6" component="h2">
+                    {driver.name}
                   </Typography>
-                  <Typography color="textSecondary">
-                    Tipo de Veículo: {driver.vehicleType}
+                  <Typography variant="body2" color="text.secondary">
+                    CPF: {driver.cpf}
                   </Typography>
-                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+                  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
                     <IconButton onClick={() => handleEdit(driver)} color="primary">
                       <EditIcon />
                     </IconButton>
@@ -288,40 +250,11 @@ const DriverList = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="CNH"
-                    value={formData.cnh}
-                    onChange={(e) => setFormData({ ...formData, cnh: e.target.value })}
+                    label="CPF"
+                    value={formData.cpf}
+                    onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
                     required
                   />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label="Data de Validade da CNH"
-                    value={formData.cnhExpirationDate}
-                    onChange={(e) => setFormData({ ...formData, cnhExpirationDate: e.target.value })}
-                    required
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Tipo de Veículo"
-                    value={formData.vehicleType}
-                    onChange={(e) => setFormData({ ...formData, vehicleType: e.target.value })}
-                    required
-                  >
-                    {vehicleTypes.map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {type}
-                      </MenuItem>
-                    ))}
-                  </TextField>
                 </Grid>
                 <Grid item xs={12}>
                   <input

@@ -17,18 +17,9 @@ COPY . .
 # Criar diretórios necessários
 RUN mkdir -p uploads data
 
-# Criar script de inicialização
-RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'echo "🚀 Iniciando aplicação..."' >> /app/start.sh && \
-    echo 'echo "📁 Verificando diretórios..."' >> /app/start.sh && \
-    echo 'mkdir -p /app/data /app/uploads' >> /app/start.sh && \
-    echo 'echo "🔄 Executando migrações do banco..."' >> /app/start.sh && \
-    echo 'node /app/src/infrastructure/database/migrate-dolly-support.js || echo "⚠️  Migração dolly-support já executada ou erro"' >> /app/start.sh && \
-    echo 'node /app/src/infrastructure/database/migrate-dolly-semi-reboque.js || echo "⚠️  Migração dolly-semi-reboque já executada ou erro"' >> /app/start.sh && \
-    echo 'echo "✅ Migrações concluídas"' >> /app/start.sh && \
-    echo 'echo "🌟 Iniciando servidor..."' >> /app/start.sh && \
-    echo 'exec node /app/src/index.js' >> /app/start.sh && \
-    chmod +x /app/start.sh
+# Copiar script de inicialização
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 # Expor porta
 EXPOSE 3001

@@ -35,6 +35,7 @@ const API_URL = '/api';
 const vehicleTypes = [
   'Caminhão Baú',
   'Caminhão Tanque',
+  'Caminhão Trator',
   'Carreta',
   'Bitrem',
   'VUC',
@@ -70,7 +71,6 @@ const TruckList = () => {
     year: '',
     type: '',
     vehicle_category: '',
-    capacity: '',
     photo: null
   });
 
@@ -116,7 +116,7 @@ const TruckList = () => {
       formDataToSend.append('year', formData.year);
       formDataToSend.append('type', formData.type);
       formDataToSend.append('vehicle_category', formData.vehicle_category);
-      formDataToSend.append('capacity', formData.capacity);
+
       
       if (formData.photo instanceof File) {
         formDataToSend.append('photo', formData.photo);
@@ -144,7 +144,6 @@ const TruckList = () => {
         year: '',
         type: '',
         vehicle_category: '',
-        capacity: '',
         photo: null
       });
       setEditingTruck(null);
@@ -180,7 +179,6 @@ const TruckList = () => {
       year: truck.year,
       type: truck.type,
       vehicle_category: truck.vehicle_category,
-      capacity: truck.capacity,
       photo: null
     });
     setOpenDialog(true);
@@ -300,7 +298,6 @@ const TruckList = () => {
                 year: '',
                 type: '',
                 vehicle_category: '',
-                capacity: '',
                 photo: null
               });
               setOpenDialog(true);
@@ -329,8 +326,7 @@ const TruckList = () => {
                   <Typography color="textSecondary">Marca/Modelo: {truck.brand} {truck.model}</Typography>
                   <Typography color="textSecondary">Ano: {truck.year}</Typography>
                   <Typography color="textSecondary">Tipo: {truck.type}</Typography>
-                  <Typography color="textSecondary">Categoria: {truck.vehicle_category === 'cavalo' ? 'Cavalo Mecânico' : 'Carreta/Reboque'}</Typography>
-                  <Typography color="textSecondary">Capacidade: {truck.capacity} kg</Typography>
+                  <Typography color="textSecondary">Categoria: {truck.vehicle_category === 'cavalo' ? 'Cavalo Mecânico' : truck.vehicle_category === 'carreta' ? 'Carreta/Reboque' : 'Dolly'}</Typography>
                   <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box>
                       <IconButton onClick={() => handleEdit(truck)} color="primary">
@@ -410,17 +406,7 @@ const TruckList = () => {
                     InputProps={{ inputProps: { min: 1900, max: new Date().getFullYear() + 1 } }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Capacidade (kg)"
-                    type="number"
-                    value={formData.capacity}
-                    onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
-                    required
-                    InputProps={{ inputProps: { min: 0 } }}
-                  />
-                </Grid>
+
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -495,7 +481,7 @@ const TruckList = () => {
                 >
                   {drivers.map((driver) => (
                     <MenuItem key={driver.id} value={driver.id}>
-                      {driver.name} - CNH: {driver.cnh}
+                      {driver.name} - CPF: {driver.cpf}
                     </MenuItem>
                   ))}
                 </Select>
